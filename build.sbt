@@ -40,16 +40,16 @@ val awaitility = "org.awaitility" % "awaitility-scala" % "4.2.0"
 
 val amazonJavaSdkSqs = "com.amazonaws" % "aws-java-sdk-sqs" % "1.12.472" exclude ("commons-logging", "commons-logging")
 
-val akkaVersion = "2.6.20"
-val akkaHttpVersion = "10.2.10"
-val akka2Actor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
-val akka2Slf4j = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-val akka2Streams = "com.typesafe.akka" %% "akka-stream" % akkaVersion
-val akka2Testkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
-val akka2Http = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+val pekkoVersion = "2.6.20"
+val pekkoHttpVersion = "10.2.10"
+val pekko2Actor = "org.apache.pekko" %% "pekko-actor" % "1.0.1"
+val pekko2Slf4j = "org.apache.pekko" %% "pekko-slf4j" % "1.0.1"
+val pekko2Streams = "org.apache.pekko" %% "pekko-stream" % "1.0.1"
+val pekko2Testkit = "org.apache.pekko" %% "pekko-testkit" % "1.0.1" % Test
+val pekko2Http = "org.apache.pekko" %% "pekko-http" % "1.0.0"
 val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
-val akkaHttpSprayJson = "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
-val akka2HttpTestkit = "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test"
+val pekkoHttpSprayJson = "org.apache.pekko" %% "pekko-http-spray-json" % "1.0.0"
+val pekko2HttpTestkit = "org.apache.pekko" %% "pekko-http-testkit" % "1.0.0" % Test
 
 val awsSpringMessagingVersion = "2.2.6.RELEASE"
 val springVersion = "5.3.29"
@@ -63,12 +63,6 @@ val h2 = "com.h2database" % "h2" % "2.2.220"
 
 val common = Seq(scalalogging)
 
-val akka25Overrides =
-  Seq( // override the 2.4.x transitive dependency from Akka HTTP
-    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-    "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
-  )
-
 val buildSettings = commonSmlBuildSettings ++ ossPublishSettings ++ Seq(
   organization := "org.elasticmq",
   scmInfo := Some(
@@ -77,7 +71,6 @@ val buildSettings = commonSmlBuildSettings ++ ossPublishSettings ++ Seq(
   scalaVersion := resolvedScalaVersion,
   scalacOptions ++= Seq("-Xasync", "-target:jvm-1.8"),
   libraryDependencies += scalaXml,
-  dependencyOverrides := akka25Overrides,
   parallelExecution := false,
   sonatypeProfileName := "org.elasticmq",
   // workaround for: https://github.com/sbt/sbt/issues/692
@@ -111,7 +104,7 @@ lazy val core: Project = (project in file("core"))
   .settings(
     Seq(
       name := "elasticmq-core",
-      libraryDependencies ++= Seq(jodaTime, jodaConvert, akka2Actor, akka2Testkit) ++ common,
+      libraryDependencies ++= Seq(jodaTime, jodaConvert, pekko2Actor, pekko2Testkit) ++ common,
       coverageMinimumStmtTotal := 94
     )
   )
@@ -128,10 +121,10 @@ lazy val persistenceCore: Project = (project in file("persistence/persistence-co
     Seq(
       name := "elasticmq-persistence-core",
       libraryDependencies ++= Seq(
-        akka2Actor,
-        akka2Slf4j,
+        pekko2Actor,
+        pekko2Slf4j,
         config,
-        akka2Testkit,
+        pekko2Testkit,
         scalaAsync
       ) ++ common
     )
@@ -173,14 +166,14 @@ lazy val restSqs: Project = (project in file("rest/rest-sqs"))
     Seq(
       name := "elasticmq-rest-sqs",
       libraryDependencies ++= Seq(
-        akka2Actor,
-        akka2Slf4j,
-        akka2Http,
-        akka2Streams,
+        pekko2Actor,
+        pekko2Slf4j,
+        pekko2Http,
+        pekko2Streams,
         sprayJson,
-        akkaHttpSprayJson,
-        akka2Testkit,
-        akka2HttpTestkit,
+        pekkoHttpSprayJson,
+        pekko2Testkit,
+        pekko2HttpTestkit,
         scalaAsync
       ) ++ common
     )
